@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
-import axios from 'axios'
+import personServices from './services/personservices'
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -10,11 +11,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [showAll, setShowAll] = useState(true)
-
+  const [notificationMessage, setNotificationMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
   const personsToShow = showAll
     ? persons
     : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
-  
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -22,12 +24,27 @@ const App = () => {
       name: newName,
       number: newNumber
     }
-    console.log(newName)
-    if (persons.findIndex(obj => { return obj.name === newName }) != -1) {
-      alert(`${newName} is already added to phonebook`)
+
+    if (persons.findIndex(obj => { return obj.name === newName }) !== -1) {
+      if (window.confirm(`${newName} is already added to phonebook, 
+          replace the old number with a new one?`)) {
+            const updateId = persons.at(persons.findIndex(obj => { return obj.name === newName })).id
+            updatePerson(updateId, newNumber)
+            setNewName('')
+            setNewNumber('')
+      }
     } else {
       setPersons(persons.concat(personObject))
+      personServices.create(personObject)
+
     }
+    setNotificationMessage(
+      `Added '${newName}'`
+    )
+    setTimeout(() => {
+    setNotificationMessage(null)
+    }, 5000)
+
     setNewName('')
     setNewNumber('')
   }
@@ -38,6 +55,35 @@ const App = () => {
 
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
+  }
+
+  const updatePerson = (id, updatedNumber) => {
+    const newPersons = persons.concat()
+    const getIndex = () => newPersons.findIndex(obj => { return obj.id === id })
+    const personToUpdate = persons.at(getIndex())
+    const updatedPerson = {...personToUpdate, number: updatedNumber}
+    personServices.update(id, updatedPerson).catch(error => {
+      setErrorMessage(
+          `Information of '${updatePerson.id}' has already been removed from server`
+      )
+    setTimeout(() =>{
+      setErrorMessage(null)
+    }, 5000)
+  })
+    newPersons.at(getIndex()).number = updatedNumber
+    setPersons(newPersons)
+  }
+
+  const deletePerson = (id, name) => {
+
+    const newPersons = persons.concat()
+    const getIndex = () => newPersons.findIndex(obj => { return obj.id === id })
+
+    if (window.confirm("Delete " + name + ' ?')) {
+      newPersons.splice(getIndex(), 1)
+      setPersons(newPersons)
+      personServices.remove(id)
+    }
   }
 
   const handleFilterChange = (event) => {
@@ -51,21 +97,24 @@ const App = () => {
   }
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons').then(response => {
-        setPersons(response.data)
+    personServices
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filter={filter} handleFilterChange={handleFilterChange}/>
+      <Notification message={notificationMessage}/>
+      <Notification error={errorMessage}/>
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
-      <PersonForm addPerson={addPerson}newName={newName}handleNameChange={handleNameChange}
-      newNumber={newNumber}handleNumberChange={handleNumberChange} />
+      <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
+        newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons remove={deletePerson} personsToShow={personsToShow} />
     </div>
   )
 
