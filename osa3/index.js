@@ -40,6 +40,18 @@ app.get('/info', (req, res) => {
   res.send(`<p1> Phonebook has info for ${persons.length} people<br>${d}`)
   })
 
+app.get('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  console.log("got HEre")
+  let number = persons.filter(i => i.id == id)
+  console.log(number)
+  if(number.length != 0){
+    res.send(number)
+  } else {
+    console.log("problemz")
+    res.status(404).end()
+  }
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
