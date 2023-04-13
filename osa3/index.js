@@ -3,8 +3,11 @@ const http = require('http')
 const express = require('express')
 const { time } = require('console')
 const morgan = require('morgan')
+const cors =require('cors')
 const app = express()
+app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 app.use(morgan(function (tokens, req, res) {
   return [
     tokens.method(req,res),
@@ -12,6 +15,7 @@ app.use(morgan(function (tokens, req, res) {
     tokens.status(req,res),
     tokens.res(req,res,'content-length'),'-',
     tokens['response-time'](req, res), 'ms'
+
   ].join(' ')
 }))
 
@@ -69,6 +73,7 @@ app.delete('/api/persons/:id', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const newPerson = req.body
+  console.log(req.body)
   newPerson.id = Math.floor(Math.random() * 1000)
   if (!req.body.name || !req.body.number) {
     return res.status(400).json({
@@ -84,7 +89,7 @@ app.post('/api/persons', (req, res) => {
   res.json(newPerson)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
