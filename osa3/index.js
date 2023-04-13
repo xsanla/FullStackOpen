@@ -3,28 +3,29 @@ const http = require('http')
 const express = require('express')
 const { time } = require('console')
 const app = express()
+app.use(express.json())
 
 let persons = [
-    { 
-        "name": "Arto Hellas", 
-        "number": "040-123456",
-        "id": 1
-      },
-      { 
-        "name": "Ada Lovelace", 
-        "number": "39-44-5323523",
-        "id": 2
-      },
-      { 
-        "name": "Dan Abramov", 
-        "number": "12-43-234345",
-        "id": 3
-      },
-      { 
-        "name": "Mary Poppendieck", 
-        "number": "39-23-6423122",
-        "id": 4
-      }
+  {
+    "name": "Arto Hellas",
+    "number": "040-123456",
+    "id": 1
+  },
+  {
+    "name": "Ada Lovelace",
+    "number": "39-44-5323523",
+    "id": 2
+  },
+  {
+    "name": "Dan Abramov",
+    "number": "12-43-234345",
+    "id": 3
+  },
+  {
+    "name": "Mary Poppendieck",
+    "number": "39-23-6423122",
+    "id": 4
+  }
 ]
 
 app.get('/', (req, res) => {
@@ -38,19 +39,39 @@ app.get('/api/persons', (req, res) => {
 app.get('/info', (req, res) => {
   const d = new Date
   res.send(`<p1> Phonebook has info for ${persons.length} people<br>${d}`)
-  })
+})
 
 app.get('/api/persons/:id', (req, res) => {
   const id = req.params.id
-  console.log("got HEre")
   let number = persons.filter(i => i.id == id)
-  console.log(number)
-  if(number.length != 0){
+  if (number.length != 0) {
     res.send(number)
   } else {
-    console.log("problemz")
     res.status(404).end()
   }
+})
+
+app.delete('/api/persons/:id', (req, res) => {
+  const id = req.params.id
+  persons = persons.filter(i => i.id != id)
+  res.send(204).end()
+})
+
+app.post('/api/persons', (req, res) => {
+  const newPerson = req.body
+  newPerson.id = Math.floor(Math.random() * 1000)
+  if (!req.body.name || !req.body.number) {
+    return res.status(400).json({
+      error: 'name and or number missing'
+    })
+  }
+  if (persons.find(n => n.name == newPerson.name) != undefined) {
+    return res.status(400).json({
+      error: 'name must be unique'
+    })
+  }
+  persons = persons.concat(newPerson)
+  res.json(newPerson)
 })
 
 const PORT = 3001
