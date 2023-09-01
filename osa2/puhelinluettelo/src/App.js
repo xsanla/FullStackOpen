@@ -4,7 +4,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import personServices from './services/personservices'
 import Notification from './components/Notification'
-
+import Error from './components/Error'
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
@@ -17,6 +17,13 @@ const App = () => {
     ? persons
     : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
 
+  function fetchPersons () {
+    personServices
+    .getAll()
+    .then(updatedPersons => {
+      setPersons(updatedPersons)
+    })
+  }
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -28,25 +35,34 @@ const App = () => {
     if (persons.findIndex(obj => { return obj.name === newName }) !== -1) {
       if (window.confirm(`${newName} is already added to phonebook, 
           replace the old number with a new one?`)) {
-            const updateId = persons.at(persons.findIndex(obj => { return obj.name === newName })).id
-            updatePerson(updateId, newNumber)
-            setNewName('')
-            setNewNumber('')
+        const updateId = persons.at(persons.findIndex(obj => { return obj.name === newName })).id
+        updatePerson(updateId, newNumber)
       }
     } else {
-      setPersons(persons.concat(personObject))
+      console.log(personObject)
       personServices.create(personObject)
-
+      .then((response) => {
+        console.log(response)
+        setNewName('')
+        setNewNumber('')
+        fetchPersons()
+/*         setPersons(persons.concat(personObject)) */
+        setNotificationMessage(
+          `Added '${newName}'`
+        )
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 5000)
+      })
+      .catch(error => {
+        setErrorMessage(error.response.data)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+        console.log(error.response.data)
+        
+      })
     }
-    setNotificationMessage(
-      `Added '${newName}'`
-    )
-    setTimeout(() => {
-    setNotificationMessage(null)
-    }, 5000)
-
-    setNewName('')
-    setNewNumber('')
   }
 
   const handleNameChange = (event) => {
@@ -61,15 +77,15 @@ const App = () => {
     const newPersons = persons.concat()
     const getIndex = () => newPersons.findIndex(obj => { return obj.id === id })
     const personToUpdate = persons.at(getIndex())
-    const updatedPerson = {...personToUpdate, number: updatedNumber}
+    const updatedPerson = { ...personToUpdate, number: updatedNumber }
     personServices.update(id, updatedPerson).catch(error => {
       setErrorMessage(
-          `Information of '${updatePerson.id}' has already been removed from server`
+        `Information of '${updatePerson.id}' has already been removed from server`
       )
-    setTimeout(() =>{
-      setErrorMessage(null)
-    }, 5000)
-  })
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    })
     newPersons.at(getIndex()).number = updatedNumber
     setPersons(newPersons)
   }
@@ -107,8 +123,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage}/>
-      <Notification error={errorMessage}/>
+      <Notification message={notificationMessage} />
+      <Error message={errorMessage && errorMessage.error} />
       <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h2>add a new</h2>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
