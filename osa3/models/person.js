@@ -22,7 +22,14 @@ const personSchema = new mongoose.Schema({
         required: true
     },
     number: {
-        type: Number,
+        type: String,
+        minlength: 8,
+        validate: {
+            validator: function(value){
+                return /^\d{3}-\d{4,}$|^\d{2}-\d{5,}$/.test(value)
+            },
+            message: 'Number must match the pattern XXX-XXXX.... or XX-XXXXX....'
+        },
         required: true
     }
 })
