@@ -94,6 +94,27 @@ test('POST request without title or url field returns bad request', async () =>{
     const response = await api.post('/api/blogs').send(newBlog)
     expect(response.status).toBe(400)
 })
+
+test('blog can be deleted succesfully', async () => {
+    await api.delete('/api/blogs/5a422a851b54a676234d17f7')
+    const response = await api.get('/api/blogs')
+    const amount = response.body.length
+    expect(amount).toBe(1)
+})
+
+test('blog can be updated succesfully', async () => {
+    const blog ={
+        _id: "5a422a851b54a676234d17f7",
+        title: "React patterns",
+        author: "Michael Chan",
+        url: "https://reactpatterns.com/",
+        likes: 12,
+        __v: 0
+    }
+    await api.put('/api/blogs/5a422a851b54a676234d17f7').send(blog)
+    const response = await api.get('/api/blogs')
+    expect(response.body[0].likes).toBe(12)
+})
 afterAll(async () => {
   await mongoose.connection.close()
 })

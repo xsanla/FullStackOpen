@@ -13,6 +13,7 @@ blogsRouter.post('/', async (request, response) => {
     }
     if (body.title === undefined || body.url === undefined){
         response.status(400).send()
+        return
     }
 
     const blog = new Blog({
@@ -26,6 +27,27 @@ blogsRouter.post('/', async (request, response) => {
 
     const posted = await blog.save()
     response.status(201).json(posted)
+})
+
+blogsRouter.delete('/:id', async (request, response) =>{
+    await Blog.findByIdAndRemove(request.params.id)
+    response.send(204).end()
+})
+
+blogsRouter.put('/:id', async (request, response) =>{
+    const body = request.body
+
+    const blog = {
+        _id: body._id,
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: body.likes,
+        __v: body.__v
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
+    response.json(updatedBlog)
 })
 
 module.exports = blogsRouter
