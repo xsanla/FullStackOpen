@@ -1,5 +1,4 @@
 import Notification from './Notification'
-import { useState } from 'react'
 const LoginForm = ({
     handleLogin,
     notification,
@@ -34,5 +33,4 @@ const LoginForm = ({
       </form>
     )
   }
-
 export default LoginForm

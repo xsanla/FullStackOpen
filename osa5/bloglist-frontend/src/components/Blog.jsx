@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import{ useState, useEffect } from 'react';
 import blogService from '../services/blogs'
 const Blog = ({ blog }) => {
   const [showDetails, setShowDetails] = useState(false);
@@ -28,7 +28,7 @@ const Blog = ({ blog }) => {
       _v: blog._v,
       user: blog.user.id
     }
-    const updatedBoi = blogService.update(blogToUpdate)
+    blogService.update(blogToUpdate)
     setLikes(likes + 1)
   }
 

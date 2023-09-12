@@ -1,6 +1,6 @@
 // BlogForm.js
-import React, { useState } from 'react';
-
+import { useState } from 'react';
+import PropTypes from 'prop-types'
 const BlogForm = ({ handleCreateNew }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
@@ -69,4 +69,8 @@ const BlogForm = ({ handleCreateNew }) => {
   );
 };
 
+BlogForm.propTypes = {
+  handleCreateNew: PropTypes.func.isRequired
+}
 export default BlogForm;
+
