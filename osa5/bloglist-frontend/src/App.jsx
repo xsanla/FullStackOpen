@@ -88,6 +88,20 @@ const App = () => {
     setUser(null)
   }
 
+  const like = (blog, likes, setLikes) => {
+    const blogToUpdate = {
+      _id: blog._id,
+      title: blog.title,
+      author: blog.author,
+      url: blog.url,
+      likes: likes + 1,
+      _v: blog._v,
+      user: blog.user.id
+    }
+    blogService.update(blogToUpdate)
+    setLikes(likes + 1)
+  }
+
   if (user === null) {
     return (
       <LoginForm handleLogin={handleLogin} notification={notification} username={username} password={password} setUsername={setUsername} setPassword={setPassword} />
@@ -103,7 +117,7 @@ const App = () => {
       <button onClick={handleLogout}>log out</button>
       {
         blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+          <Blog key={blog.id} blog={blog} like={like} />
         )
       }
     </div>

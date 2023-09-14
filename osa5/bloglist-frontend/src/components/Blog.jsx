@@ -1,6 +1,6 @@
 import{ useState, useEffect } from 'react';
 import blogService from '../services/blogs'
-const Blog = ({ blog }) => {
+const Blog = ({ blog, like }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [likes, setLikes] = useState(blog.likes)
   const [currentUsers, setCurrentUsers] = useState(false)
@@ -18,19 +18,7 @@ const Blog = ({ blog }) => {
       blogService.deleteBlog(blog._id)
     }
   }
-  const like = () => {
-    const blogToUpdate = {
-      _id: blog._id,
-      title: blog.title,
-      author: blog.author,
-      url: blog.url,
-      likes: likes + 1,
-      _v: blog._v,
-      user: blog.user.id
-    }
-    blogService.update(blogToUpdate)
-    setLikes(likes + 1)
-  }
+ 
 
   const blogStyle = {
     paddingTop: 10,
@@ -55,7 +43,7 @@ const Blog = ({ blog }) => {
           </div>
           <div>
             <strong>Likes:</strong> {likes}
-            <button onClick={like}>like</button>
+            <button onClick={() => like(blog, likes, setLikes)}>like</button>
           </div>
           <div>
             <strong>User:</strong> {blog.user.name}

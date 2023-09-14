@@ -1,17 +1,17 @@
 import React from 'react'
 import '@testing-library/jest-dom'
 import userEvent from '@testing-library/user-event'
-import { render, screen } from '@testing-library/react'
+import { render, screen, act } from '@testing-library/react'
 import Blog from './Blog'
 
-beforeEach(async() => {
+beforeEach(async () => {
     const user = {
         username: "apina",
         _id: "123123123123123"
     }
     window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
-      )
+    )
 })
 test('renders content', () => {
     const user = {
@@ -44,8 +44,8 @@ test('renders adittional content when view button pressed', async () => {
         user: userData,
         likes: 5
     }
-
-    const {container} = render(<Blog blog={blog} />)
+    const mockHandler = jest.fn()
+    const { container } = render(<Blog blog={blog} like={mockHandler} />)
 
     const user = userEvent.setup()
     const button = screen.getByText('view')
@@ -67,13 +67,19 @@ test('pressing like button twice calls the eventhandler twice', async () => {
         user: userData,
         likes: 5
     }
+    const mockHandler = jest.fn()
+    render(<Blog blog={blog} like={mockHandler} />)
 
-    const {container} = render(<Blog blog={blog} />)
-
-    const user = userEvent.setup()
+    const user = userEvent
     const button = screen.getByText('view')
     await user.click(button)
+    const likeButton = screen.getByText('like')
+    await act(async () => {
+        await user.click(likeButton)
+    })
+    await act(async () => {
+        await user.click(likeButton)
+    })
 
-    const detailsDiv = container.querySelector('.details')
-    expect(detailsDiv).toBeDefined()
+    expect(mockHandler.mock.calls).toHaveLength(2)
 })
