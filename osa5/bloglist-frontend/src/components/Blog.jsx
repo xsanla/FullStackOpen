@@ -49,7 +49,7 @@ const Blog = ({ blog }) => {
         </button>
       </div>
       {showDetails && (
-        <div>
+        <div className='details'>
           <div>
             <strong>URL:</strong> {blog.url}
           </div>
