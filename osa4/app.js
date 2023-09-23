@@ -1,5 +1,6 @@
 const blogsRouter = require('./controllers/blogs')
 const userRouter = require('./controllers/users')
+const testingRouter = require('./controllers/testing')
 const http = require('http')
 const express = require('express')
 const app = express()
@@ -20,5 +21,5 @@ app.use(tokenExtractor)
 app.use('/api/login', loginRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', userRouter)
-
+app.use('/api/testing', testingRouter)
 module.exports = app
