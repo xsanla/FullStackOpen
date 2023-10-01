@@ -10,10 +10,7 @@ const AnecdoteForm = () => {
         const content = event.target.anecdote.value
         event.target.anecdote.value = ''
         dispatch(createNew(content))
-        dispatch(setNotification(`you added ${content}`))
-        setTimeout(() => {
-            dispatch(setNotification(null))
-          }, 5000)
+        dispatch(setNotification(`you added ${content}`,5))
     }
 
     return (
