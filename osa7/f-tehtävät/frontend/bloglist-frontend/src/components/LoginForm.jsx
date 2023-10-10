@@ -2,6 +2,7 @@ import Notification from './Notification'
 import { setNotification } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
 import { login } from '../reducers/userReducer'
+
 const LoginForm = ({
     username,
     password,
@@ -19,7 +20,7 @@ const LoginForm = ({
       <form onSubmit={handleLogin}>
         <h2>log in to application</h2>
         <Notification/>
-        <div>
+        <div className="form-group">
           username
           <input
             id="username"
@@ -29,7 +30,7 @@ const LoginForm = ({
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
-        <div>
+        <div className="form-group">
           password
           <input
             id="password"
@@ -39,7 +40,7 @@ const LoginForm = ({
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id="loginButton" type="submit">login</button>
+        <button id="loginButton" type="submit" className="btn btn-primary">login</button>
       </form>
     )
   }

@@ -1,15 +1,18 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Blog from "./components/Blog";
 import blogService from "./services/blogs";
-import loginService from "./services/login";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
 import Togglable from "./components/Togglable";
 import BlogForm from "./components/BlogForm";
-import { setNotification } from "./reducers/notificationReducer";
+import Menu from "./components/menu";
 import { initializeBlogs } from "./reducers/blogReducer";
 import { setUser, logout } from "./reducers/userReducer";
+import Home from "./components/Home";
+import Users from "./components/Users";
+import User from "./components/User";
+import BlogPage from "./components/BlogPage";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import BlogList from "./components/BlogList";
 const App = () => {
   const [username, setUsername] = useState("");
@@ -17,8 +20,8 @@ const App = () => {
   const dispatch = useDispatch();
   const blogFormRef = useRef();
   const user = useSelector((state) => {
-    return state.user
-  })
+    return state.user;
+  });
   useEffect(() => {
     dispatch(initializeBlogs());
   }, []);
@@ -31,7 +34,7 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
-
+  
   if (user === null) {
     return (
       <LoginForm
@@ -42,22 +45,33 @@ const App = () => {
       />
     );
   }
-
   return (
-    <>
-      <div>
-        <h2>blogs</h2>
-        <Notification />
-        <p>{user.name} logged in</p>
-        <button id="logout" onClick={() => dispatch(logout())}>
-          log out
-        </button>
-        <BlogList></BlogList>
+    <Router>
+      <div className="container">
+        <div>
+          <Menu userName={user.username}></Menu>
+          <div className="barAddons">
+            <p>{user.username} logged in</p>
+            <button
+              className="logOut"
+              id="logout"
+              onClick={() => dispatch(logout())}
+            >
+              log out
+            </button>
+          </div>
+          <h2>blogs</h2>
+          <Notification />
+        </div>
+
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="/users/:id" element={<User />} />
+          <Route path="blogs/:id" element={<BlogPage />} />
+        </Routes>
       </div>
-      <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm />
-      </Togglable>
-    </>
+    </Router>
   );
 };
 

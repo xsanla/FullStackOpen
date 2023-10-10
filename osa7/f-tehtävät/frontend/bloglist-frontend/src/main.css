@@ -21,7 +21,15 @@ code {
   padding: 10px;
   margin-bottom: 10px;
 }
+.logOut {
+  height: min-content;
+  text-align: center;
+}
 
+.barAddons {
+  display: flex;
+  flex-direction: row;
+}
 .error {
   color: red;
   background: lightgrey;

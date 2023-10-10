@@ -37,6 +37,7 @@ blogsRouter.post("/", userExtractor, async (request, response) => {
     url: body.url,
     likes: body.likes,
     user: user._id,
+    comments: [],
     __v: body.__v,
   });
   const posted = await blog.save();
@@ -83,4 +84,13 @@ blogsRouter.put("/:id", async (request, response) => {
   response.json(updatedBlog);
 });
 
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const body = request.body;
+  const comment = body.comment
+  const id = request.params.id
+  const blog = await Blog.findById(id)
+  blog.comments = blog.comments.concat(comment)
+  await blog.save()
+  response.status(200).send()
+})
 module.exports = blogsRouter;
