@@ -3,17 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import blogService from "./services/blogs";
 import Notification from "./components/Notification";
 import LoginForm from "./components/LoginForm";
-import Togglable from "./components/Togglable";
-import BlogForm from "./components/BlogForm";
-import Menu from "./components/menu";
+import Menu from "./components/Menu"
 import { initializeBlogs } from "./reducers/blogReducer";
 import { setUser, logout } from "./reducers/userReducer";
 import Home from "./components/Home";
 import Users from "./components/Users";
 import User from "./components/User";
 import BlogPage from "./components/BlogPage";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import BlogList from "./components/BlogList";
+import { BrowserRouter as Router, Routes, Route} from "react-router-dom";
 const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +31,7 @@ const App = () => {
       blogService.setToken(user.token);
     }
   }, []);
-  
+
   if (user === null) {
     return (
       <LoginForm
