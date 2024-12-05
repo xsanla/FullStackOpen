@@ -77,11 +77,25 @@ const emptyError = () => {
       <ErrorParagraph message={errorMessage}></ErrorParagraph>
       <form onSubmit={diaryCreation}>
         <label htmlFor="date">Date:</label>
-        <input id="date" value={newDate} onChange={(event) => setNewDate(event.target.value)}></input><br></br>
-        <label htmlFor="visibility">Visibility:</label>
-        <input id="visibility" value={newVisibility} onChange={(event) => setNewVisibility(event.target.value)}></input><br></br>
-        <label htmlFor="weather">Weather:</label>
-        <input id="weather" value={newWeather} onChange={(event) => setNewWeather(event.target.value)}></input><br></br>
+        <input id="date" type='date' value={newDate} onChange={(event) => setNewDate(event.target.value)}></input><br></br>
+
+        <div>
+          Visibility:
+          great <input type='radio' name="visibility" onChange={() => setNewVisibility("great")}></input>
+          good <input type='radio' name="visibility" onChange={() => setNewVisibility("good")}></input>
+          ok <input type='radio' name="visibility" onChange={() => setNewVisibility("ok")}></input>
+          poor <input type='radio' name="visibility" onChange={() => setNewVisibility("poor")}></input>
+        </div>
+
+        <div>
+          Weather:
+          sunny <input type='radio' name="weather" onChange={() => setNewWeather("sunny")}></input>
+          rainy <input type='radio' name="weather" onChange={() => setNewWeather("rainy")}></input>
+          cloudy <input type='radio' name="weather" onChange={() => setNewWeather("cloudy")}></input>
+          stormy <input type='radio' name="weather" onChange={() => setNewWeather("stormy")}></input>
+          windy <input type='radio' name="weather" onChange={() => setNewWeather("windy")}></input>
+        </div>
+        
         <label htmlFor="comment">Comment:</label>
         <input id="comment" value={newComment} onChange={(event) => setNewComment(event.target.value)}></input><br></br>
         <button type='submit' onClick={emptyError}>add</button>
